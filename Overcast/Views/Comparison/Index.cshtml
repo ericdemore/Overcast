@@ -1,0 +1,112 @@
+@model MediaComparisonModel
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="text-center mb-5">
+                <h1 class="display-4 fw-bold mb-3">Compare Cast Members</h1>
+                <p class="lead text-muted">Discover shared talent between your favorite movies and TV shows</p>
+            </div>
+
+            <div class="search-container mb-5">
+                <form asp-controller="Comparison" asp-action="Compare" method="post" class="mb-4">
+                    <div class="row g-4">
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <label for="title1" class="form-label fw-medium mb-2">First Title</label>
+                                <input type="text" class="form-control form-control-lg" id="title1" name="title1" required 
+                                       value="@Model.Title1" placeholder="e.g., The Matrix">
+                            </div>
+                        </div>
+                        <div class="col-md-2 d-flex align-items-center justify-content-center">
+                            <div class="text-center text-muted mt-4">
+                                <i class="bi bi-arrow-left-right fs-3"></i>
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="form-group">
+                                <label for="title2" class="form-label fw-medium mb-2">Second Title</label>
+                                <input type="text" class="form-control form-control-lg" id="title2" name="title2" required 
+                                       value="@Model.Title2" placeholder="e.g., John Wick">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg px-5">
+                            <i class="bi bi-search me-2"></i>Find Common Cast
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+            {
+                <div class="alert alert-warning text-center p-4 mb-4">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    @Model.ErrorMessage
+                </div>
+            }
+
+            @if (Model.CommonCast != null && Model.CommonCast.Any())
+            {
+                <div class="results-container">
+                    <h2 class="section-title text-center mb-4">
+                        <span class="text-muted">Comparing:</span> @Model.Title1 <span class="text-muted">and</span> @Model.Title2
+                    </h2>
+                    <div class="row g-4">
+                        @foreach (var actor in Model.CommonCast)
+                        {
+                            <div class="col-md-6">
+                                <div class="card cast-member-card h-100">
+                                    <div class="row g-0">
+                                        <div class="col-md-4">
+                                            <img src="@actor.ProfilePath" class="img-fluid" alt="@actor.Name"
+                                                 onerror="this.src='/images/no-profile.jpg'">
+                                        </div>
+                                        <div class="col-md-8">
+                                            <div class="card-body">
+                                                <h5 class="card-title fw-bold mb-3">@actor.Name</h5>
+                                                <div class="mb-2">
+                                                    <p class="card-text mb-1">
+                                                        <span class="fw-medium text-primary">@Model.Title1</span>
+                                                        <small class="text-muted">(@actor.Media1ReleaseDate)</small>
+                                                    </p>
+                                                    <p class="card-text text-muted">as @actor.Character1</p>
+                                                </div>
+                                                <div>
+                                                    <p class="card-text mb-1">
+                                                        <span class="fw-medium text-primary">@Model.Title2</span>
+                                                        <small class="text-muted">(@actor.Media2ReleaseDate)</small>
+                                                    </p>
+                                                    <p class="card-text text-muted">as @actor.Character2</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+            else if (!string.IsNullOrEmpty(Model.Title1) && !string.IsNullOrEmpty(Model.Title2) && string.IsNullOrEmpty(Model.ErrorMessage))
+            {
+                <div class="alert alert-info text-center p-4 mt-4">
+                    <i class="bi bi-info-circle-fill me-2"></i>
+                    No common cast members found between these titles.
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Add loading state to form submission
+        document.querySelector('form').addEventListener('submit', function(e) {
+            const button = this.querySelector('button[type="submit"]');
+            button.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Searching...';
+            button.disabled = true;
+        });
+    </script>
+}
