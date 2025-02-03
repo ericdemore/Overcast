@@ -25,7 +25,7 @@ Overcast is an MVC .NET application designed to help users find mutual actors be
 ## Installation
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-repo/overcast.git
+   git clone https://github.com/ericdemore/Overcast
    ```
 2. Open the solution file in Visual Studio.
 3. Add your TMDB API key in `appsettings.json`:
